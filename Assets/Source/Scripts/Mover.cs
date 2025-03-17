@@ -8,13 +8,13 @@ public class Mover : MonoBehaviour
     private Transform[] _waypoints;
     private int _currentWaypoint;
 
-    private void Start()
+    private void Awake()
     {
         _waypoints = new Transform[_parentalWaypoint.childCount];
 
         for (int i = 0; i < _parentalWaypoint.childCount; i++)
         {
-            _waypoints[i] = _parentalWaypoint.GetChild(i).GetComponent<Transform>();
+            _waypoints[i] = _parentalWaypoint.GetChild(i);
         }
     }
 
