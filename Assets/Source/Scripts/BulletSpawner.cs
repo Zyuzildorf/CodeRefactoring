@@ -5,47 +5,22 @@ public class BulletSpawner : MonoBehaviour
 {
     [SerializeField] private Transform _target;
     [SerializeField] private Bullet _prefab;
+    [SerializeField] private float _repeatShootingRate;
 
     private WaitForSeconds _shootingRepeatRate;
     private Bullet _newBullet;
     private Vector3 _direction;
-    private bool _isTriggerPulled;
     private bool _isShooting;
 
     private void Awake()
     {
-        _shootingRepeatRate = new WaitForSeconds(_prefab.RepeatShottingRate);
-    }
-
-    private void OnMouseDown()
-    {
-        if (_isTriggerPulled)
-        {
-            _isTriggerPulled = false;
-            StopShooting();
-        }
-        else if (_isTriggerPulled == false)
-        {
-            _isTriggerPulled = true;
-            StartShooting();
-        }
-        else
-        {
-            _isTriggerPulled = true;
-            StartShooting();
-        }
-    }
-
-    private void StartShooting()
-    {
+        _shootingRepeatRate = new WaitForSeconds(_repeatShootingRate);
         _isShooting = true;
-        StartCoroutine(Shooting());
     }
 
-    private void StopShooting()
+    private void Start()
     {
-        _isShooting = false;
-        StopCoroutine(Shooting());
+        StartCoroutine(Shooting());
     }
 
     private IEnumerator Shooting()
@@ -57,7 +32,15 @@ public class BulletSpawner : MonoBehaviour
             _newBullet = Instantiate(_prefab, transform.position + _direction, Quaternion.identity);
             
             _newBullet.transform.up = _direction;
-            _newBullet.GetComponent<Rigidbody>().velocity = _direction * _prefab.BulletSpeed;
+
+            if (_newBullet.TryGetComponent(out Rigidbody rigidbody))
+            {
+                rigidbody.velocity = _direction * _prefab.BulletSpeed;
+            }
+            else
+            {
+                Debug.Log("Компонент Rigidbody не найден.");
+            }
             
             yield return _shootingRepeatRate;
         }

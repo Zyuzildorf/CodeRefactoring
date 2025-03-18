@@ -2,22 +2,11 @@ using UnityEngine;
 
 public class Mover : MonoBehaviour
 {
-    [SerializeField] private Transform _parentalWaypoint;
+    [SerializeField] private Waypoints _waypoints;
     [SerializeField] private float _moveSpeed;
 
-    private Transform[] _waypoints;
     private int _currentWaypoint;
-
-    private void Awake()
-    {
-        _waypoints = new Transform[_parentalWaypoint.childCount];
-
-        for (int i = 0; i < _parentalWaypoint.childCount; i++)
-        {
-            _waypoints[i] = _parentalWaypoint.GetChild(i);
-        }
-    }
-
+    
     private void Update()
     {
         Move();
@@ -25,12 +14,12 @@ public class Mover : MonoBehaviour
 
     private void Move()
     {
-        if (transform.position == _waypoints[_currentWaypoint].position)
+        if (transform.position == _waypoints.WaypointsArray[_currentWaypoint].position)
         {
-            _currentWaypoint = (_currentWaypoint + 1) % _waypoints.Length;
+            _currentWaypoint = ++_currentWaypoint % _waypoints.WaypointsArray.Length;
         }
         
-        transform.position = Vector3.MoveTowards(transform.position, _waypoints[_currentWaypoint].position,
+        transform.position = Vector3.MoveTowards(transform.position, _waypoints.WaypointsArray[_currentWaypoint].position,
             _moveSpeed * Time.deltaTime);
     }
 }
